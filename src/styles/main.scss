@@ -1,0 +1,141 @@
+@import 'variables';
+
+@import 'element-custom';
+@import 'bootstrap-custom';
+@import '~bootstrap/scss/bootstrap';
+
+html,
+body,
+.el-container {
+  height: 100%;
+  width: 100%;
+  padding: 0 auto;
+  margin: 0 auto;
+  background: $main-background;
+  overflow: hidden;
+}
+
+.el-header,
+.el-main {
+  padding: 0px 0px;
+  margin: 0px 0px;
+}
+
+.el-header {
+  background: $item-background;
+  border-bottom: $item-border;
+  overflow: hidden;
+  padding: 5px;
+}
+
+.container-fluid {
+  padding-top: 15px;
+}
+
+.el-aside {
+  border-right: $item-border !important;
+  background: $item-background;
+  overflow-x: hidden;
+}
+
+.brand-name {
+  font-family: $brand-font-family;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.brand-logo {
+  width: 150px;
+  margin: 0px 10px;
+  cursor: pointer;
+}
+
+.el-menu {
+  border-right: 0px !important;
+  height: 100%;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s;
+}
+.page-enter, .page-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+.vh-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.v-center {
+  display: flex;
+  align-items: center;
+}
+
+.h-center {
+  display: flex;
+  justify-content: center;
+}
+
+.about p {
+  margin-left: 35px;
+}
+
+.el-menu-item-group__title {
+  margin: 0px 0px;
+  padding: 0px 0px;
+}
+
+.el-card {
+  color: #ffffff;
+  border: $item-border;
+}
+
+.el-card__header {
+  background: $header-background;
+  border-bottom: $item-border;
+  color: $main-color;
+}
+
+.el-card__body {
+  background: $item-background;
+}
+
+.el-table-expand {
+  font-size: 0;
+}
+.el-table-expand label {
+  width: 180px;
+  color: #99a9bf;
+}
+.el-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: $light-background; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $main-color; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; 
+}
