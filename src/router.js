@@ -24,6 +24,11 @@ export default new Router({
       path: '/group/:name',
       name: 'Group',
       component: Group
+    },
+    {
+      path: '/lang/:type',
+      name: 'Language',
+      component: About
     }
   ]
 })

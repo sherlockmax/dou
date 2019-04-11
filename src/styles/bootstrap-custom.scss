@@ -1,4 +1,16 @@
 /* App self define colors */
 $theme-colors: (
-  "primary": $main-color
+  "primary": $main-color,
+  "danger": #B3450E,
+  "success": #409167,
+  "warning": #ffc107,
+  "secondary": #909399,
+  "info": #0A76A4
 );
+
+/*
+$--color-success: #409167 !default;
+$--color-warning: #9DA408 !default;
+$--color-danger: #B3450E !default;
+$--color-info: #909399 !default;// changed #0A76A4 !default;
+*/
