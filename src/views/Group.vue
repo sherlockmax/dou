@@ -5,13 +5,13 @@
         font-awesome-icon.mr-3.text-white(:icon="['fa', 'layer-group']")
         span.mr-3.text-white(style="width: 100px;") Group Name
       .col
-        span.text-primary.text-same-w {{ this.$route.params.name }}
+        span.text-primary.text-same-w {{ groupName }}
     .row.v-center.mb-3
       .col-auto(style='min-width: 185px;')
         font-awesome-icon.mr-3.text-white(:icon="['fa', 'key']")
         span.mr-3.text-white(style="width: 100px;") OTP Token
       .col
-        span.text-primary.text-same-w {{ otpToken }}
+        span.text-primary.text-same-w(v-if="$store.getters.getGroupList[groupName]") {{ $store.getters.getGroupList[groupName].token }}
     .row.v-center.mb-3
       .col-auto(style='min-width: 185px;')
         font-awesome-icon.mr-3.text-white(:icon="['fa', 'tasks']")
@@ -22,7 +22,7 @@
         el-button(size='mini' type='primary' @click='addJobDialogVisible = true') Add Job
     .row.mb-3
       .col
-        el-table(:data='jobList' :default-sort="{prop: 'id', order: 'descending'}")
+        el-table(:data='jobList' :default-sort="{prop: 'exec_time', order: 'descending'}")
             el-table-column(type='expand')
               template(slot-scope='props')
                 el-form.el-table-expand(label-position='left' inline='')
@@ -38,23 +38,43 @@
                     span {{ props.row.interval_pattern }}
                   el-form-item(label='Execute Time')
                     span {{ parseUnxitime(props.row.exec_time) }}
-                    i.text-warning.ml-3 Execute {{ leftTime(props.row.exec_time) }}
+                    i.ml-3(:class="leftTime(props.row.exec_time) != 'Expired' ? 'text-warning' : 'text-muted'") {{ leftTime(props.row.exec_time) }}
                   el-form-item(label='Execute Command')
                     span {{ props.row.exec_cmd }}
                   el-form-item(label='RequestURL')
                     span {{ props.row.request_url }}
             el-table-column(prop='name' label='Name' sortable)
             el-table-column(prop='interval_pattern' label='Interval')
-            el-table-column(label='Exectue Time' width='240')
+            el-table-column(prop='exec_time' label='Exectue Time' width='240' sortable)
               template(slot-scope='scope') 
-                .name-wrapper(slot='reference') {{ parseUnxitime(scope.row.exec_time) }}
+                .name-wrapper.text-same-w(slot='reference' style="font-size: 0.8em") {{ parseUnxitime(scope.row.exec_time) }}
                 div.vh-center
-                  i.text-warning Execute {{ leftTime(scope.row.exec_time) }}
+                  i(style="font-size: 0.8em" :class="leftTime(scope.row.exec_time) != 'Expired' ? 'text-warning' : 'text-muted'") {{ leftTime(scope.row.exec_time) }}
             el-table-column(align='right' label='' width='170')
               template(slot-scope='scope')
-                el-button(size='mini' type='success' v-if='scope.row.active == false') Active
-                el-button(size='mini' type='info' v-if='scope.row.active == true') Pause
-                el-button(size='mini' type='danger') Delete
+                el-popover(placement='top' v-model='playJobDialogVisible')
+                  .text-dark Execute Time：
+                  el-date-picker.mb-2(
+                    v-model='playJobExecuteTime'
+                    size='mini'
+                    type='datetime'
+                    placeholder='Choose a time'
+                    format="yyyy-MM-dd HH:mm:ss"
+                    value-format="timestamp")
+                  div(style='text-align: right; margin: 0')
+                    el-button(size='mini' type='text' @click='playJobDialogVisible = false') Cancel
+                    el-button(type='success' size='mini' @click="activeJob(scope.row.id)") Confirm
+                  el-button(slot='reference' size='mini' type='success' v-if='scope.row.active == false')
+                    font-awesome-icon(:icon="['fa', 'play']")
+                el-button(size='mini' type='info' v-if='scope.row.active == true' @click="pauseJob(scope.row.id)")
+                  font-awesome-icon(:icon="['fa', 'pause']")
+                el-popover.ml-1(placement='top' width='160' v-model='removeJobDialogVisible')
+                  p.text-danger Confirm delete?
+                  div(style='text-align: right; margin: 0')
+                    el-button(size='mini' type='text' @click='removeJobDialogVisible = false') Cancel
+                    el-button(type='danger' size='mini' @click="removeJob(scope.row.id)") Confirm
+                  el-button(slot='reference' size='mini' type='danger')
+                    font-awesome-icon(:icon="['fa', 'trash-alt']")
     .row.v-center.mb-3
       .col-auto(style='min-width: 185px;')
         font-awesome-icon.mr-3.text-white(:icon="['fa', 'laptop-code']")
@@ -79,7 +99,7 @@
                   v-model='addJobForm.exec_time'
                   type="datetime"
                   format="yyyy-MM-dd HH:mm:ss"
-                  value-format="yyyy-MM-dd HH:mm:ss"
+                  value-format="timestamp"
                   style='width: 100%;')
                 .v-center.text-muted If time expired mean execute immediately         
               el-form-item(label='Request URL' prop='request_url')
@@ -97,7 +117,7 @@
           span.dialog-footer(slot='footer')
             el-button(type='info' @click="resetForm('addJobForm')") Reset
             el-button(type='info' @click='addJobDialogVisible = false') Close
-            el-button(type='primary' @click='handleAddJobForm()') Submit
+            el-button(type='primary' @click='submitAddJobForm()') Submit
 </template>
 
 <script>
@@ -107,10 +127,13 @@ import moment from 'moment'
 export default {
   data() {
     return {
-      otpToken: '',
+      groupName: '',
       jobList: [],
       nodeList: [],
       addJobDialogVisible: false,
+      removeJobDialogVisible: false,
+      playJobDialogVisible: false,
+      playJobExecuteTime: moment.now(),
       addJobForm: {
         group_name: '',
         name: '',
@@ -132,10 +155,6 @@ export default {
   },
   methods: {
     setPageData(groupName) {
-      api.GetGroupInfo(groupName).then((info) => {
-        this.otpToken = info
-      })
-
       api.GetJobList(groupName).then((data) => {
         this.jobList = data
       })
@@ -144,10 +163,40 @@ export default {
         this.nodeList = data
       })
 
-      this.addJobForm.groupName = groupName
+      this.groupName = groupName
     },
-    handleAddJobForm() {
-      this.addJobDialogVisible = false
+    submitAddJobForm() {
+      this.addJobForm.group_name = this.groupName
+      this.addJobForm.exec_time = parseInt(this.addJobForm.exec_time / 1000)
+      api.AddJob(this.addJobForm).then(() => {
+        api.GetJobList(this.groupName).then((data) => {
+          this.jobList = data
+          this.addJobDialogVisible = false
+        })
+      })
+    },
+    pauseJob(jobID) {
+      api.PauseJob(this.groupName, jobID).then(() => {
+        api.GetJobList(this.groupName).then((data) => {
+          this.jobList = data
+        })
+      })
+    },
+    activeJob(jobID) {
+      api.ActiveJob(this.groupName, jobID, parseInt(this.playJobExecuteTime / 1000)).then(() => {
+        api.GetJobList(this.groupName).then((data) => {
+          this.jobList = data
+          this.playJobDialogVisible = false
+        })
+      })
+    },
+    removeJob(jobID) {
+      api.RemoveJob(this.groupName, jobID).then(() => {
+        api.GetJobList(this.groupName).then((data) => {
+          this.jobList = data
+          this.removeJobDialogVisible = false
+        })
+      })
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
@@ -156,7 +205,11 @@ export default {
       return moment.unix(timestamp).format('YYYY-MM-DD ddd HH:mm:ss Z')
     },
     leftTime(timestamp) {
-      return moment.unix(timestamp).fromNow()
+      if (timestamp < moment().unix()) {
+        return 'Expired'
+      } else {
+        return 'Execute ' + moment.unix(timestamp).fromNow()
+      }
     }
   }
 }

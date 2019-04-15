@@ -14,14 +14,13 @@
         Clock(:format="'YYYY-MM-DD ddd HH:mm:ss Z'")
     el-container
       el-aside(style="width: 180px")
-        SideMenu(:groupList="groupList")
+        SideMenu(:groupList="$store.getters.getGroupList")
       el-main
         transition(name='page', mode='out-in')
           router-view
 </template>
 
 <script>
-import api from '@/plugins/api'
 import SideMenu from '@/components/SideMenu.vue'
 import Clock from '@/components/Clock.vue'
 
@@ -30,18 +29,10 @@ export default {
     SideMenu,
     Clock
   },
-  data() {
-    return {
-      groupList: []
-    }
-  },
   mounted() {
     this.$store.dispatch('updateGuaVersion')
     this.$store.dispatch('updatePackageVersion')
-
-    api.GetGroupList().then((groupList) => {
-      this.groupList = groupList
-    })
+    this.$store.dispatch('updateGroupList')
   }
 }
 </script>

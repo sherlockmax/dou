@@ -15,7 +15,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/gua': {
-        target: 'http://localhost:7777', // 微服務 api
+        target: 'http://127.0.0.1:7777', // 微服務 api
         changeOrigin: true,
         pathRewrite: {
           '^/gua': ''

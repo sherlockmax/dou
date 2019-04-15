@@ -14,7 +14,7 @@
         i.el-icon-news
         span Group List
       el-menu-item-group
-        el-menu-item(v-for="group in groupList" :key="group" :index="'/group/'+group") {{ group }}
+        el-menu-item(v-for="(group, key) in groupList" :key="key" :index="'/group/'+group.name") {{ group.name }}
     el-submenu(index='language')
       template(slot='title')
         i.el-icon-setting
@@ -31,8 +31,8 @@
 export default {
   props: {
     groupList: {
-      type: Array,
-      value: [],
+      type: Object,
+      value: {},
       required: true
     }
   },
