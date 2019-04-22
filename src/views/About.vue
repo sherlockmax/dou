@@ -12,6 +12,7 @@
       font-awesome-icon(:icon="['fa', 'star']")
     span Dou
   p 當前介面版本：{{ $store.getters.getPackageVersion }}
+  p 支援服務版本：{{ $store.getters.getPackageVersion }}
   p Github：
     a(href='https://github.com/sherlockmax/dou', target='_blank') https://github.com/sherlockmax/dou
   h4.mb-4.text-primary

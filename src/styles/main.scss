@@ -249,3 +249,10 @@ button:focus {
   width: 130px;
   z-index: 1200;
 }
+
+.is-loading {
+  transition        : all .3s ease;
+  -webkit-transition: all .3s ease;
+
+  display: flex !important;
+}

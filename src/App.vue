@@ -1,6 +1,6 @@
 <template lang="pug">
   el-container
-    el-header.vh-center 
+    el-header.vh-center
       span.brand-name
         span.text-danger G
         span.text-white U
@@ -21,18 +21,33 @@
 </template>
 
 <script>
+import LoadingModal from '@/components/LoadingModal.vue'
 import SideMenu from '@/components/SideMenu.vue'
 import Clock from '@/components/Clock.vue'
 
 export default {
   components: {
+    LoadingModal,
     SideMenu,
     Clock
+  },
+  data() {
+    return {
+      showContent: false
+    }
   },
   mounted() {
     this.$store.dispatch('updateGuaVersion')
     this.$store.dispatch('updatePackageVersion')
     this.$store.dispatch('updateGroupList')
+
+    setTimeout(function() {
+      let l = document.getElementById('loading')
+      if (l != null) {
+        document.body.removeChild(l)
+      }
+      //$('#loading').fadeOut()
+    }, 1000)
   }
 }
 </script>
