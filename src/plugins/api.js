@@ -24,6 +24,10 @@ const Api = {
     const response = await axios.get(API_PREFIX + API_VERSION + '/' + groupName + '/node/list')
     return response.data.success
   },
+  AddGroup: async (groupForm) => {
+    const response = await axios.post(API_PREFIX + API_VERSION + '/register/group', groupForm)
+    return response.data.success
+  },
   AddJob: async (jobForm) => {
     const response = await axios.post(API_PREFIX + API_VERSION + '/add/job', jobForm)
     return response.data.success

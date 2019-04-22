@@ -14,6 +14,13 @@
         span.text-primary.text-same-w(v-if="$store.getters.getGroupList[groupName]") {{ $store.getters.getGroupList[groupName].token }}
     .row.v-center.mb-3
       .col-auto(style='min-width: 185px;')
+        font-awesome-icon.mr-3.text-white(:icon="['fa', 'key']")
+        span.mr-3.text-white(style="width: 100px;") Action
+      .col
+        el-button(size='mini' type='info') Download Group Data
+        el-button(size='mini' type='info') Import Group Data
+    .row.v-center.mb-3
+      .col-auto(style='min-width: 185px;')
         font-awesome-icon.mr-3.text-white(:icon="['fa', 'tasks']")
         span.mr-3.text-white(style="width: 100px;")
           span.mr-1 Job List
