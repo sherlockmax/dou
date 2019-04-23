@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import About from './views/About.vue'
 import Group from './views/Group.vue'
+import ErrorPage from './views/ErrorPage.vue'
 
 Vue.use(Router)
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/lang/:type',
       name: 'Language',
       component: About
+    },
+    {
+      path: '*',
+      name: 'Error',
+      component: ErrorPage
     }
   ]
 })

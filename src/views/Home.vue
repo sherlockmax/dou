@@ -9,7 +9,7 @@
                 h5.card-title Main Action
             .row.mb-3
               .col
-                .card-text.text-muted.text-same-w(style="font-size: 0.9em;") Enjoy you life！
+                .card-text.text-muted.text-same-w(style="font-size: 0.9em;") Enjoy you're life！
             .row
               .col.text-right
                 el-button(size='mini' type='info') Download All Data
@@ -22,7 +22,7 @@
                 h5.card-title.text-info {{ group.name }}
             .row.mb-3
               .col
-                .card-text.text-muted.text-same-w(style="font-size: 0.9em;") {{ group.token }}
+                .card-text.text-muted.text-same-w(style="font-size: 0.9em; overflow: hidden;" :title="group.token") {{ group.token }}
             .row
               .col.text-right
                 el-button(size='mini' type='danger' disabled) Delete

@@ -37,6 +37,7 @@ export default {
     }
   },
   mounted() {
+    console.log(process.env.SUPPORT_GUA_VERSION)
     this.$store.dispatch('updateGuaVersion')
     this.$store.dispatch('updatePackageVersion')
     this.$store.dispatch('updateGroupList')
